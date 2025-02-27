@@ -21,6 +21,18 @@
     .container {
       display: flex;
       height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .video-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
     }
     
     .sidebar {
@@ -102,15 +114,6 @@
       padding: 20px;
       position: relative;
       overflow: hidden;
-    }
-    
-    .scene-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
     }
     
     .chatbot-container {
@@ -265,37 +268,63 @@
       color: white;
     }
 
-        button {
-            background-color: #242990; /* Green background */
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 5px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-    
-        button:hover {
-            background-color: #242990; /* Darker green on hover */
-        }
-    
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-    
-        li {
-            margin: 10px 0;
-        }
+    button {
+        background-color: #242990; /* Blue background */
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 5px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
 
+    button:hover {
+        background-color: #242990; /* Same blue on hover */
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    li {
+        margin: 10px 0;
+    }
+    
+    .content-overlay {
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      border-radius: 10px;
+      color: white;
+      max-width: 600px;
+      margin-top: 20px;
+    }
+    
+    .content-overlay h2 {
+      margin-bottom: 15px;
+    }
+    
+    .content-overlay p {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
     
   </style>
 </head>
 <body>
+  <!-- Background Video -->
+  <video class="video-background" autoplay muted loop>
+    <!-- Replace the src attribute with your video file path -->
+    <source src="videoplayback.webm" type="video/mp4">
+    <!-- You can add fallback sources for different formats -->
+    <!-- <source src="your-video-file.webm" type="video/webm"> -->
+    Your browser does not support the video tag.
+  </video>
+
   <div class="container">
     <div class="sidebar">
       <div class="logo">
@@ -305,15 +334,14 @@
         <ul>
           <li class="active">Dashboard</li>
           <ul>
-            <li><li><a href="isro.html"><button>Virtual ISRO Lab</button></a></li></li>
+            <li><a href="isro.html"><button>Virtual ISRO Lab</button></a></li>
             <li><a href="drdo.html"><button>Virtual DRDO Lab</button></a></li>
             <li><a href="projects.html"><button>My Projects</button></a></li>
             <li><a href="research.html"><button>Research Gallery</button></a></li>
             <li><a href="innovation.html"><button>Innovation Hub</button></a></li>
             <li><a href="collaborate.html"><button>Connect & Collaborate</button></a></li>
             <li><a href="settings.html"><button>Settings</button></a></li>
-        </ul>
-        
+          </ul>
         </ul>
       </div>
     </div>
@@ -322,14 +350,17 @@
       <div class="header">
         <h2>Science & Innovation Hub</h2>
         <div class="user-info">
-          <span><li><a href="profile.html"><button>Tanishq Kumar Kashyap</button></a></li></span>
+          <span><a href="profile.html"><button>Tanishq Kumar Kashyap</button></a></span>
           <img src="/api/placeholder/40/40" alt="User Avatar">
         </div>
       </div>
       
       <div class="content-area">
-        <div class="scene-container" id="scene-container">
-          <!-- Three.js 3D scene will be rendered here -->
+        <!-- Content overlay with welcome message -->
+        <div class="content-overlay">
+          <h2>Welcome to BharatVerse</h2>
+          <p>Explore the future of Indian science and innovation in this immersive platform. Connect with researchers, showcase your projects, and collaborate with experts from ISRO, DRDO, and other premier institutions.</p>
+          <p>Navigate through virtual labs, interact with cutting-edge simulations, and be part of India's growing scientific community.</p>
         </div>
         
         <div class="chatbot-container">
@@ -356,150 +387,7 @@
     </div>
   </div>
 
-  <div class="loading-overlay" id="loadingOverlay">
-    <div class="stars" id="stars"></div>
-    
-    <div class="solar-system">
-        <div class="sun" style="top: 70%; left: 80%;"></div>
-        <div class="planet planet1" style="top: 30%; left: 30%;"></div>
-        <div class="planet planet2" style="top: 60%; left: 20%;"></div>
-        <div class="planet planet3" style="top: 40%; left: 70%;"></div>
-        <div class="planet planet4" style="top: 80%; left: 40%;"></div>
-    </div>
-    
-    <div class="loading-container">
-        <div class="rocket-container" id="scene">
-            <div class="rocket-flame"></div>
-        </div>
-        <div class="loading-text">Loading</div>
-        <div class="loading-progress">
-            <div class="progress-bar"></div>
-        </div>
-        <div class="loading-percentage" id="percentage">0%</div>
-    </div>
-</div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script>
-    
-    // Initialize 3D scene with a rotating globe using Three.js
-    function initScene() {
-      const container = document.getElementById('scene-container');
-      
-      // Create scene
-      const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x000000);
-      
-      // Create camera
-      const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-      camera.position.z = 5;
-      
-      // Create renderer
-      const renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(container.clientWidth, container.clientHeight);
-      container.appendChild(renderer.domElement);
-      
-      // Create a globe
-      const radius = 2;
-      const segments = 64;
-      const rings = 64;
-      
-      // Create the sphere geometry
-      const geometry = new THREE.SphereGeometry(radius, segments, rings);
-      
-      // Create materials for continents and oceans
-      const earthMaterial = new THREE.MeshPhongMaterial({
-        color: 0x2233ff, // blue ocean
-        specular: 0x555555,
-        shininess: 30
-      });
-      
-      // Create the Earth mesh
-      const earth = new THREE.Mesh(geometry, earthMaterial);
-      scene.add(earth);
-      
-      // Create continents with simple geometry
-      const continentGeometry = new THREE.SphereGeometry(radius * 1.01, 16, 16);
-      const continentMaterial = new THREE.MeshPhongMaterial({
-        color: 0x44aa44, // green continents
-        specular: 0x333333,
-        shininess: 5
-      });
-      
-      // Add some random continent-like shapes
-      for (let i = 0; i < 7; i++) {
-        const phi = Math.random() * Math.PI * 2;
-        const theta = Math.random() * Math.PI;
-        
-        const scale = 0.2 + Math.random() * 0.3;
-        
-        const x = radius * Math.sin(theta) * Math.cos(phi);
-        const y = radius * Math.sin(theta) * Math.sin(phi);
-        const z = radius * Math.cos(theta);
-        
-        const continent = new THREE.Mesh(
-          new THREE.SphereGeometry(scale, 8, 8),
-          continentMaterial
-        );
-        
-        continent.position.set(x, y, z);
-        // Make the continent slightly above the ocean
-        continent.position.normalize().multiplyScalar(radius * 1.01);
-        
-        // Orient the continent to face outward
-        continent.lookAt(0, 0, 0);
-        // Slightly squash the continent
-        continent.scale.set(1, 1, 0.1);
-        
-        earth.add(continent);
-      }
-      
-      // Add a special marker for India's position (approximate)
-      const indiaMarker = new THREE.Mesh(
-        new THREE.SphereGeometry(0.1, 16, 16),
-        new THREE.MeshPhongMaterial({ color: 0xff5500 })
-      );
-      
-      // Approximate geographical coordinates for India
-      const indiaLat = 20 * (Math.PI / 180); // Convert to radians
-      const indiaLong = 77 * (Math.PI / 180); // Convert to radians
-      
-      // Convert from spherical to Cartesian coordinates
-      const ix = radius * Math.cos(indiaLat) * Math.cos(indiaLong);
-      const iy = radius * Math.sin(indiaLat);
-      const iz = radius * Math.cos(indiaLat) * Math.sin(indiaLong);
-      
-      indiaMarker.position.set(ix, iy, iz);
-      earth.add(indiaMarker);
-      
-      // Add ambient light
-      const ambientLight = new THREE.AmbientLight(0x333333);
-      scene.add(ambientLight);
-      
-      // Add directional light
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-      directionalLight.position.set(5, 3, 5);
-      scene.add(directionalLight);
-      
-      // Animation loop
-      function animate() {
-        requestAnimationFrame(animate);
-        
-        earth.rotation.y += 0.005;
-        
-        renderer.render(scene, camera);
-      }
-      
-      animate();
-      
-      // Handle window resize
-      window.addEventListener('resize', () => {
-        camera.aspect = container.clientWidth / container.clientHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(container.clientWidth, container.clientHeight);
-      });
-    }
-    
     // Initialize chat functionality
     function initChat() {
       const chatMessages = document.getElementById('chat-messages');
@@ -563,7 +451,6 @@
     
     // Initialize the application
     document.addEventListener('DOMContentLoaded', () => {
-      initScene();
       initChat();
     });
   </script>
