@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BharatVerse - Login/Sign Up</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Canvas for 3D Background -->
+  <canvas id="bg"></canvas>
+
+  <div class="container">
+    <div class="form-container">
+      <!-- Login Form -->
+      <div id="login-form" class="form">
+        <h2>Welcome Back!</h2>
+        <p>Login to continue your journey.</p>
+        <input type="email" id="login-email" placeholder="Email" required>
+        <input type="password" id="login-password" placeholder="Password" required>
+        <button id="login-btn">Login</button>
+        <p class="toggle-text">Don't have an account? <span id="toggle-signup">Sign Up</span></p>
+      </div>
+
+      <!-- Sign Up Form -->
+      <div id="signup-form" class="form hidden">
+        <h2>Join BharatVerse</h2>
+        <p>Create an account to get started.</p>
+        <input type="text" id="signup-name" placeholder="Full Name" required>
+        <input type="email" id="signup-email" placeholder="Email" required>
+        <input type="password" id="signup-password" placeholder="Password" required>
+        <button id="signup-btn">Sign Up</button>
+        <p class="toggle-text">Already have an account? <span id="toggle-login">Login</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Three.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r146/three.min.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="script.js"></script>
+  <script src="threejs-background.js"></script> <!-- New file for 3D background -->
+</body>
+</html>

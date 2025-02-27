@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DRDO Advanced Virtual Laboratory</title>
+    <style>
+        /* Advanced Military Theme */
+        :root {
+            --dark-green: #0a1a0f;
+            --medium-green: #1c3a21;
+            --light-green: #345830;
+            --accent: #8fb339;
+            --dark-accent: #5a7d20;
+            --sand: #d8c09d;
+            --brown: #6f4e37;
+            --steel: #2c3e50;
+            --alert: #c0392b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+        
+        body {
+            background-color: var(--dark-green);
+            color: var(--sand);
+            background-image: 
+                radial-gradient(var(--medium-green) 15%, transparent 16%),
+                radial-gradient(var(--medium-green) 15%, transparent 16%);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            overflow-x: hidden;
+        }
+        
+        /* Header with advanced radar */
+        header {
+            background: linear-gradient(180deg, rgba(10,26,15,0.9) 0%, rgba(28,58,33,0.9) 100%);
+            padding: 1rem;
+            border-bottom: 2px solid var(--accent);
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .site-title {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo {
+            margin-right: 1rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--medium-green);
+            border: 2px solid var(--accent);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .logo::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(var(--accent), transparent 70%);
+            opacity: 0.3;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 0.5; }
+            100% { transform: scale(0.8); opacity: 0.3; }
+        }
+        
+        .title-text h1 {
+            color: var(--sand);
+            font-size: 1.8rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 0.25rem;
+        }
+        
+        .title-text p {
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+        
+        .radar-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+        }
+        
+        .radar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: rgba(0, 30, 0, 0.8);
+            border: 2px solid var(--accent);
+            position: relative;
+            box-shadow: 0 0 15px rgba(139, 195, 74, 0.3);
+            overflow: hidden;
+        }
+        
+        .radar::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50%;
+            height: 1px;
+            background-color: var(--accent);
+            transform-origin: left center;
+            animation: radarScan 3s infinite linear;
+            box-shadow: 0 0 5px var(--accent);
+        }
+        
+        .radar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50%;
+            border: 1px solid var(--accent);
+            animation: radarPulse 2s infinite;
+        }
+        
+        @keyframes radarScan {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes radarPulse {
+            0% { box-shadow: 0 0 0 0 rgba(139, 195, 74, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(139, 195, 74, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(139, 195, 74, 0); }
+        }
+        
+        .radar-blips {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+        
+        .blip {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: var(--alert);
+            border-radius: 50%;
+            opacity: 0;
+            box-shadow: 0 0 5px var(--alert);
+        }
+        
+        .grid-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px dashed rgba(139, 195, 74, 0.3);
+            border-radius: 50%;
+        }
+        
+        .circle-1 { width: 40%; height: 40%; }
+        .circle-2 { width: 70%; height: 70%; }
+        
+        /* Main content grid */
+        .main-content {
+            padding: 2rem;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--accent);
+            padding-bottom: 0.5rem;
+        }
+        
+        .section-title h2 {
+            color: var(--sand);
+            font-size: 1.5rem;
+            margin-left: 0.5rem;
+        }
+        
+        .section-title .icon {
+            color: var(--accent);
+            font-size: 1.5rem;
+        }
+        
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .card {
+            background: linear-gradient(135deg, rgba(28,58,33,0.9) 0%, rgba(10,26,15,0.9) 100%);
+            border: 1px solid var(--light-green);
+            border-radius: 5px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent), var(--dark-accent));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent);
+        }
+        
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background-color: var(--light-green);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card:hover .card-icon {
+            background-color: var(--accent);
+            color: var(--dark-green);
+            animation: iconPulse 1s infinite;
+        }
+        
+        @keyframes iconPulse {
+            0% { box-shadow: 0 0 0 0 rgba(139, 195, 74, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(139, 195, 74, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(139, 195, 74, 0); }
+        }
+        
+        .card-title {
+            color: var(--sand);
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .card-body {
+            color: #aaa;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .card-footer {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            margin-right: 0.5rem;
+            position: relative;
+        }
+        
+        .status-indicator::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: var(--accent);
+            animation: statusPulse 1.5s infinite;
+        }
+        
+        @keyframes statusPulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+        
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, var(--medium-green) 0%, var(--dark-green) 100%);
+            border: 2px solid var(--accent);
+            margin: 5% auto;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(139, 195, 74, 0.3);
+            position: relative;
+        }
+        
+        .modal-header {
+            background: linear-gradient(90deg, var(--dark-green) 0%, var(--medium-green) 100%);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--accent);
+        }
+        
+        .modal-title {
+            color: var(--sand);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .modal-title-icon {
+            margin-right: 0.75rem;
+            color: var(--accent);
+        }
+        
+        .close {
+            color: var(--sand);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .close:hover {
+            color: var(--accent);
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+            max-height: calc(90vh - 120px);
+            overflow-y: auto;
+        }
+        
+        /* Missile simulation */
+        .simulation-container {
+            width: 100%;
+            position: relative;
+            border: 1px solid var(--light-green);
+            border-radius: 5px;
+            overflow: hidden;
+            background-color: #0a0a0a;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        canvas {
+            display: block;
+            width: 100%;
+            background: radial-gradient(ellipse at center, #1c3a21 0%, #0a1a0f 100%);
+        }
+        
+        .controls-panel {
+            background: linear-gradient(180deg, rgba(28,58,33,0.9) 0%, rgba(10,26,15,0.9) 100%);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+            border: 1px solid var(--light-green);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .control-group {
+            margin-bottom: 1rem;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--sand);
+            font-size: 0.9rem;
+        }
+        
+        .control-slider {
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+        
+        .slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 6px;
+            background: var(--dark-green);
+            border-radius: 3px;
+            outline: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .slider::-webkit-slider-thumb:hover {
+            background: var(--sand);
+            box-shadow: 0 0 10px var(--accent);
+        }
+        
+        .slider-value {
+            margin-left: 1rem;
+            width: 40px;
+            color: var(--accent);
+            font-weight: bold;
+            text-align: right;
+        }
+        
+        select, button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--steel);
+            border: 1px solid var(--light-green);
+            border-radius: 4px;
+            color: var(--sand);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        select:hover, button:hover {
+            background-color: var(--light-green);
+        }
+        
+        button {
+            background-color: var(--accent);
+            color: var(--dark-green);
+            font-weight: bold;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120%;
+            height: 120%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%) scale(0);
+            border-radius: 50%;
+            opacity: 0;
+            transition: transform 0.5s, opacity 0.3s;
+        }
+        
+        button:hover::after {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+        
+        .data-readout {
+            background-color: rgba(10, 26, 15, 0.7);
+            border: 1px solid var(--light-green);
+            border-radius: 4px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: var(--accent);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.5rem;
+        }
+        
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .data-label {
+            color: var(--sand);
+        }
+        
+        /* AI Assistant */
+        .chat-interface {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+            border: 1px solid var(--light-green);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            background: linear-gradient(90deg, var(--dark-green) 0%, var(--medium-green) 100%);
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--accent);
+        }
+        
+        .assistant-status {
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            position: relative;
+        }
+        
+        .assistant-status::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50%;
+            background-color: var(--accent);
+            animation: statusPulse 1.5s infinite;
+        }
+        
+        .chat-body {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            background-color: rgba(10, 26, 15, 0.7);
+        }
+        
+        .message {
+            margin-bottom: 1rem;
+            max-width: 75%;
+        }
+        
+        .user-message {
+            margin-left: auto;
+            background-color: var(--medium-green);
+            border-radius: 10px 10px 0 10px;
+            padding: 0.75rem;
+            position: relative;
+        }
+        
+        .assistant-message {
+            background-color: var(--steel);
+            border-radius: 10px 10px 10px 0;
+            padding: 0.75rem;
+            position: relative;
+        }
+        
+        .message-time {
+            font-size: 0.7rem;
+            color: #999;
+            text-align: right;
+            margin-top: 0.25rem;
+        }
+        
+        .chat-footer {
+            padding: 0.75rem;
+            background-color: var(--medium-green);
+            display: flex;
+            border-top: 1px solid var(--light-green);
+        }
+        
+        .message-input {
+            flex: 1;
+            padding: 0.75rem;
+            background-color: var(--dark-green);
+            border: 1px solid var(--light-green);
+            border-radius: 4px;
+            color: var(--sand);
+            margin-right: 0.5rem;
+        }
+        
+        .send-button {
+            width: auto;
+            padding: 0.75rem 1.5rem;
+        }
+        
+        /* Encryption Tool */
+        .encryption-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .encryption-panel {
+            background-color: rgba(10, 26, 15, 0.7);
+            border: 1px solid var(--light-green);
+            border-radius: 5px;
+            padding: 1rem;
+        }
+        
+        .panel-header {
+            border-bottom: 1px solid var(--light-green);
+            padding-bottom: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: var(--accent);
+            font-weight: bold;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            background-color: var(--dark-green);
+            border: 1px solid var(--light-green);
+            border-radius: 4px;
+            padding: 0.75rem;
+            color: var(--sand);
+            margin-bottom: 1rem;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .encryption-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--dark-green);
+            border: 1px solid var(--light-green);
+            border-radius: 4px;
+            color: var(--sand);
+        }
+        
+        .security-level {
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .security-bar {
+            flex: 1;
+            height: 8px;
+            background-color: var(--dark-green);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0 1rem;
+        }
+        
+        .security-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #c0392b 0%, #f39c12 50%, var(--accent) 100%);
+            width: 70%;
+            border-radius: 4px;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding-bottom: 1.5rem;
+            }
+            
+            .radar-container {
+                width: 120px;
+                height: 120px;
+                margin-top: 1rem;
+            }
+            
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .encryption-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="site-title">
+            <div class="logo">DRDO</div>
+            <div class="title-text">
+                <h1>DRDO Advanced Virtual Laboratory</h1>
+                <p>Defence Research and Development Organisation</p>
+            </div>
+        </div>
+        <div class="radar-container">
+            <div class="radar">
+                <div class="grid-circle circle-1"></div>
+                <div class="grid-circle circle-2"></div>
+                <div class="radar-blips" id="radar-blips"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="section-title">
+            <div class="icon">🔬</div>
+            <h2>Virtual Research Facilities</h2>
+        </div>
+        
+        <div class="grid-container">
+            <div class="card" onclick="openModal('missile-modal')">
+                <div class="card-header">
+                    <div class="card-icon">🚀</div>
+                    <div class="card-title">Missile Testing Simulation</div>
+                </div>
+                <div class="card-body">
+                    Advanced physics-based simulator for missile trajectory analysis, environmental testing, and impact assessment.
+                </div>
+                <div class="card-footer">
+                    <div class="status">
+                        <div class="status-indicator"></div>
+                        <span>Online</span>
+                    </div>
+                    <span>Priority: High</span>
+                </div>
+            </div>
+            
+            <div class="card" onclick="openModal('ai-modal')">
+                <div class="card-header">
+                    <div class="card-icon">🤖</div>
+                    <div class="card-title">AI-Powered Defense Assistant</div>
+                </div>
+                <div class="card-body">
+                    Intelligent system providing critical defense information, threat analysis, and tactical suggestions.
+                </div>
+                <div class="card-footer">
+                    <div class="status">
+                        <div class="status-indicator"></div>
+                        <span>Online</span>
+                    </div>
+                    <span>Priority: High</span>
+                </div>
+            </div>
+            
+            <div class="card" onclick="openModal('comm-modal')">
+                <div class="card-header">
+                    <div class="card-icon">🔐</div>
+                    <div class="card-title">Secure Communication Hub</div>
+                </div>
+                <div class="card-body">
+                    Military-grade encryption and decryption tools for secure battlefield communications.
+                </div>
+                <div class="card-footer">
+                    <div class="status">
+                        <div class="status-indicator"></div>
+                        <span>Online</span>
+                    </div>
+                    <span>Priority: Critical</span>
+                </div>
+            </div>
+            
+            <div class="card" onclick="openModal('cyber-modal')">
+                <div class="card-header">
+                    <div class="card-icon">🛡️</div>
+                    <div class="card-title">Cybersecurity Training Hub</div>
+                </div>
+                <div class="card-body">
+                    Advanced defense against cyber threats with real-time attack simulations and countermeasure training.
+                </div>
+                <div class="card-footer">
+                    <div class="status">
+                        <div class="status-indicator"></div>
+                        <span>Online</span>
+                    </div>
+                    <span>Priority: High</span>
+                </div>
+            </div>
+            
+            <div class="card" onclick="openModal('drone-modal')">
+                <div class="card-header">
+                    <div class="card-icon">🛸</div>
+                    <div class="card-title">Autonomous Drone Lab</div>
+                </div>
+                <div class="card-body">
+                    Development and testing facility for next-generation autonomous aerial defense systems.
+                </div>
+                <div class="card-footer">
+                    <div class="status">
+                        <div class="status-indicator"></div>
+                        <span>Online</span>
+                    </div>
+                    <span>Priority: Medium</span>
+                </div>
+            </div>
+            
+            <div class="card" onclick="openModal('strategy-modal')">
+                <div class="card-header">
+                    <div class="card-icon">🗺️</div>
+                    <div class="card-title">3D Battlefield Strategy Room</div>
+                </div>
+                <div class="card-body">
+                    Advanced terrain mapping and tactical simulation for battlefield command training.
+                </div>
+                <div class="card-footer">
+                    <div class="status">
+                        <div class="status-indicator"></div>
+                        <span>Online</span>
+                    </div>
+                    <span>Priority: Medium</span>
+                </div>
+            </div>
+            
+            <div class="card" onclick="openModal('wind-modal')">
+                <div class="card-header">
+                    <div class="card-icon">💨</div>
+                    <div class="card-title">Hypersonic Wind Tunnel</div>
+                </div>
+                <div class="card-body">
+                    Simulation facility for testing aerodynamics of vehicles at speeds exceeding Mach 5.
+                </div>
+                <div class="card-footer">
+                    <div class="status">
+                        <div class="status-indicator"></div>
+                        <span>Online</span>
+                    </div>
+                    <span>Priority: Medium</span>
+                </div>
+            </div>
+            
+            <div class="card" onclick="openModal('robotics-modal')">
+                <div class="card-header">
+                    <div class="card-icon">🦾</div>
+                    <div class="card-title">Robotics & Exoskeleton Lab</div>
+                </div>
+                <div class="card-body">
+                    Development center for combat-ready robotic systems and soldier enhancement technologies.
+                </div>
+                <div class="card-footer">
+                    <div class="status">
+                        <div class="status-indicator"></div>
+                        <span>Online</span>
+                    </div>
+                    <span>Priority: Medium</span>
+                </div>
+            </div>
+            
+            <div class="card" onclick="openModal('weapon-modal')">
+                <div class="card-header">
+                    <div class="card-icon">🏹</div>
+                    <div class="card-title">Weapon & Defense Tech Showcase</div>
+                </div>
+                <div class="card-body">
+                    Interactive exhibition of next-generation weapon systems and defensive technologies.
+                </div>
+                <div class="card-footer">
+                    <div class="status">
+                        <div class="status-indicator"></div>
+                        <span>Online</span>
+                    </div>
+                    <span>Priority: Medium</span>
+                </div>
+            </div>
+            
+            <div class="card" onclick="openModal('future-modal')">
+                <div class="card-header">
+                    <div class="card-icon">🔬</div>
+                    <div class="card-title">Future Tech Research Arena</div>
+                </div>
+                <div class="card-body">
+                    Experimental laboratory for emerging defense technologies and theoretical concepts.
+                </div>
+                <div class="card-footer">
+                    <div class="status">
+                        <div class="status-indicator"></div>
+                        <span>Online</span>
+                    </div>
+                    <span>Priority: Low</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <div id="missile-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Military Research Gallery</title>
+    <style>
+        :root {
+            --primary: #2c3e50;           /* Dark blue/slate */
+            --secondary: #1a2639;         /* Darker blue/navy */
+            --accent: #8d021f;            /* Military red */
+            --light: #d8dbe2;             /* Light gray */
+            --dark: #0a0a0a;              /* Almost black */
+            --olive: #4b5320;             /* Military olive */
+            --sand: #c2b280;              /* Desert sand */
+            --camo1: #5d5d31;             /* Camouflage color 1 */
+            --camo2: #4b3621;             /* Camouflage color 2 */
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto Condensed', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f2f2f2;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--secondary), var(--dark));
+            color: white;
+            text-align: center;
+            padding: 60px 20px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 4px solid var(--accent);
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('/api/placeholder/1200/400') center/cover no-repeat;
+            opacity: 0.2;
+            animation: fadeIn 2s ease-in-out;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+            animation: slideInDown 1s ease-out;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 800;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            animation: fadeIn 2s ease-in-out;
+        }
+        
+        section {
+            margin-bottom: 60px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--secondary);
+            position: relative;
+            padding-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-left: 4px solid var(--accent);
+            padding-left: 15px;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--olive);
+            transition: width 0.3s ease;
+        }
+        
+        section:hover h2::after {
+            width: 100px;
+        }
+        
+        .featured-research {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .research-card {
+            background: white;
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e0e0e0;
+            position: relative;
+        }
+        
+        .research-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .research-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: var(--accent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        .research-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .research-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .research-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.7) 100%);
+        }
+        
+        .security-level {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--accent);
+            color: white;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            z-index: 1;
+        }
+        
+        .research-content {
+            padding: 20px;
+        }
+        
+        .research-content h3 {
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+        
+        .research-content p {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .tag {
+            display: inline-block;
+            background-color: var(--light);
+            color: var(--dark);
+            padding: 4px 10px;
+            border-radius: 2px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .tag:hover {
+            background-color: var(--olive);
+            color: white;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: var(--olive);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 2px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            border: none;
+        }
+        
+        .cta-button:hover {
+            background-color: var(--accent);
+            transform: scale(1.05);
+        }
+        
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        
+        .category-filter {
+            background-color: var(--light);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .category-filter:hover, .category-filter.active {
+            background-color: var(--olive);
+            color: white;
+        }
+        
+        .impact-section {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .impact-card {
+            background: white;
+            padding: 30px;
+            border-radius: 2px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            border-left: 3px solid var(--accent);
+        }
+        
+        .impact-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .impact-card h3 {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+        
+        .impact-card p {
+            color: var(--dark);
+            font-weight: 500;
+        }
+        
+        .search-bar {
+            display: flex;
+            margin-bottom: 30px;
+        }
+        
+        .search-bar input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 2px 0 0 2px;
+            font-size: 1rem;
+        }
+        
+        .search-bar button {
+            background-color: var(--olive);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 0 2px 2px 0;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        
+        .search-bar button:hover {
+            background-color: var(--accent);
+        }
+        
+        footer {
+            background-color: var(--secondary);
+            color: white;
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 60px;
+        }
+        
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 15px;
+        }
+        
+        .social-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            background-color: var(--accent);
+            transform: scale(1.1);
+        }
+        
+        /* Military-specific elements */
+        .insignia {
+            display: inline-block;
+            margin-right: 10px;
+            width: 30px;
+            height: 30px;
+            background-color: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .classified-stamp {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            color: rgba(220, 20, 60, 0.2);
+            font-size: 3rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            pointer-events: none;
+            letter-spacing: 2px;
+            border: 4px solid rgba(220, 20, 60, 0.2);
+            padding: 5px 15px;
+        }
+        
+        .restricted-info {
+            background-color: #f8d7da;
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            margin: 20px 0;
+            font-weight: 500;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes counterAnimation {
+            from { content: "0"; }
+            to { content: attr(data-target); }
+        }
+        
+        @media (max-width: 768px) {
+            .featured-research {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            header p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>DEFENSE RESEARCH GALLERY</h1>
+            <p>Advancing military technology and defense capabilities through innovative research and strategic development</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Introduction Section -->
+        <section id="introduction" class="visible">
+            <h2>MISSION BRIEFING</h2>
+            <p>Welcome to the Defense Research Gallery, featuring cutting-edge military technology research and development projects. Our mission is to advance capabilities that ensure strategic advantage, enhance force protection, and support national security objectives. Through collaborative efforts with military branches, defense industry partners, and research institutions, we are committed to delivering next-generation solutions to complex battlefield challenges.</p>
+            
+            <div class="restricted-info">
+                <strong>NOTICE:</strong> Some research materials are restricted. Proper clearance levels are required to access classified information. All visitors must adhere to security protocols.
+            </div>
+        </section>
+        
+        <!-- Featured Research Section -->
+        <section id="featured-research">
+            <h2>FEATURED RESEARCH</h2>
+            <div class="featured-research">
+                <div class="research-card">
+                    <div class="security-level">Unclassified</div>
+                    <div class="research-image" style="background-image: url('/api/placeholder/400/200')"></div>
+                    <div class="research-content">
+                        <h3>Advanced Ballistic Protection Systems</h3>
+                        <p>Development of next-generation body armor utilizing composite materials for enhanced protection against multiple threat levels while reducing weight.</p>
+                        <div class="tags">
+                            <span class="tag">Force Protection</span>
+                            <span class="tag">Materials</span>
+                            <span class="tag">Infantry</span>
+                        </div>
+                        <a href="#" class="cta-button">View Research</a>
+                    </div>
+                </div>
+                
+                <div class="research-card">
+                    <div class="security-level">Restricted</div>
+                    <div class="research-image" style="background-image: url('/api/placeholder/400/200')"></div>
+                    <div class="research-content">
+                        <h3>AI-Enhanced Battlefield Awareness</h3>
+                        <p>Implementation of machine learning algorithms to process multi-source intelligence for improved situational awareness and decision-making support.</p>
+                        <div class="tags">
+                            <span class="tag">AI</span>
+                            <span class="tag">C4ISR</span>
+                            <span class="tag">Tactical</span>
+                        </div>
+                        <a href="#" class="cta-button">View Research</a>
+                    </div>
+                </div>
+                
+                <div class="research-card">
+                    <div class="security-level">Confidential</div>
+                    <div class="research-image" style="background-image: url('/api/placeholder/400/200')"></div>
+                    <div class="research-content">
+                        <h3>Autonomous Logistics Systems</h3>
+                        <p>Research into unmanned ground vehicles for supply chain operations in contested environments, reducing personnel exposure to threats.</p>
+                        <div class="tags">
+                            <span class="tag">Robotics</span>
+                            <span class="tag">Logistics</span>
+                            <span class="tag">Autonomy</span>
+                        </div>
+                        <a href="#" class="cta-button">View Research</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Research Categories Section -->
+        <section id="research-categories">
+            <h2>RESEARCH DIVISIONS</h2>
+            <div class="categories">
+                <button class="category-filter active">All</button>
+                <button class="category-filter">Weapons Systems</button>
+                <button class="category-filter">Cybersecurity</button>
+                <button class="category-filter">Communications</button>
+                <button class="category-filter">Force Protection</button>
+                <button class="category-filter">Medical</button>
+            </div>
+            
+            <div class="search-bar">
+                <input type="text" placeholder="Search by keyword, project code, or division...">
+                <button>SEARCH</button>
+            </div>
+            
+            <div class="featured-research">
+                <div class="research-card">
+                    <div class="security-level">Unclassified</div>
+                    <div class="research-image" style="background-image: url('/api/placeholder/400/200')"></div>
+                    <div class="research-content">
+                        <h3>Battlefield Telemedicine Systems</h3>
+                        <p>Advanced remote medical monitoring and treatment systems for casualty care in austere environments with limited medical support.</p>
+                        <div class="tags">
+                            <span class="tag">Medical</span>
+                            <span class="tag">Telemedicine</span>
+                            <span class="tag">Field Ops</span>
+                        </div>
+                        <a href="#" class="cta-button">View Research</a>
+                    </div>
+                </div>
+                
+                <div class="research-card">
+                    <div class="security-level">Restricted</div>
+                    <div class="research-image" style="background-image: url('/api/placeholder/400/200')"></div>
+                    <div class="research-content">
+                        <h3>Quantum-Resistant Cryptography</h3>
+                        <p>Development of encryption protocols designed to withstand attacks from quantum computers, ensuring long-term communications security.</p>
+                        <div class="tags">
+                            <span class="tag">Cybersecurity</span>
+                            <span class="tag">Encryption</span>
+                            <span class="tag">Quantum</span>
+                        </div>
+                        <a href="#" class="cta-button">View Research</a>
+                    </div>
+                </div>
+                
+                <div class="research-card">
+                    <div class="security-level">Secret</div>
+                    <div class="research-image" style="background-image: url('/api/placeholder/400/200')"></div>
+                    <div class="research-content">
+                        <h3>Directed Energy Weapon Systems</h3>
+                        <p>Research on high-energy laser technology for counter-drone and close-in defense applications with reduced collateral effects.</p>
+                        <div class="tags">
+                            <span class="tag">Weapons</span>
+                            <span class="tag">Directed Energy</span>
+                            <span class="tag">Defense</span>
+                        </div>
+                        <a href="#" class="cta-button">View Research</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Visuals & Media Section -->
+        <section id="visuals-media">
+            <h2>TACTICAL VISUALIZATIONS</h2>
+            <p>Explore our research through interactive battlefield simulations, tactical diagrams, and technical demonstrations.</p>
+            <!-- Placeholder for interactive visualization -->
+            <div style="background-color: #1a2639; height: 400px; margin-top: 20px; display: flex; align-items: center; justify-content: center; border-radius: 2px; color: white;">
+                <p style="font-size: 1.2rem;">Interactive Battlefield Simulation Environment</p>
+            </div>
+        </section>
+        
+        <!-- Impact & Citations Section -->
+        <section id="impact-citations">
+            <h2>OPERATIONAL IMPACT</h2>
+            <div class="impact-section">
+                <div class="impact-card">
+                    <h3>85+</h3>
+                    <p>Field-Deployed Technologies</p>
+                </div>
+                <div class="impact-card">
+                    <h3>120</h3>
+                    <p>Research Publications</p>
+                </div>
+                <div class="impact-card">
+                    <h3>45</h3>
+                    <p>Partner Organizations</p>
+                </div>
+                <div class="impact-card">
+                    <h3>32</h3>
+                    <p>Patents Secured</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Upcoming Research Section -->
+        <section id="upcoming-research">
+            <h2>UPCOMING PROJECTS</h2>
+            <div class="featured-research">
+                <div class="research-card">
+                    <div class="security-level">Classified</div>
+                    <div class="research-image" style="background-image: url('/api/placeholder/400/200')"></div>
+                    <div class="research-content">
+                        <h3>Next-Generation Combat Network Architecture</h3>
+                        <p>Development of resilient battlefield networks capable of maintaining connectivity in contested electromagnetic environments.</p>
+                        <div class="tags">
+                            <span class="tag">Communications</span>
+                            <span class="tag">Networks</span>
+                            <span class="tag">EW Resilient</span>
+                        </div>
+                        <p><strong>Est. Completion:</strong> Q3 2025</p>
+                    </div>
+                </div>
+                
+                <div class="research-card">
+                    <div class="security-level">Restricted</div>
+                    <div class="research-image" style="background-image: url('/api/placeholder/400/200')"></div>
+                    <div class="research-content">
+                        <h3>Advanced Human Performance Optimization</h3>
+                        <p>Research into physiological monitoring and enhancement techniques to improve warfighter performance in high-stress environments.</p>
+                        <div class="tags">
+                            <span class="tag">Biotechnology</span>
+                            <span class="tag">Human Factors</span>
+                            <span class="tag">Performance</span>
+                        </div>
+                        <p><strong>Est. Completion:</strong> Q2 2026</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Call to Action Section -->
+        <section id="call-to-action">
+            <h2>JOIN THE MISSION</h2>
+            <p>We're seeking qualified researchers, industry partners, and military stakeholders to advance critical defense technologies. Join us in developing solutions that support warfighter effectiveness and national security.</p>
+            <div style="display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
+                <a href="#" class="cta-button">APPLY FOR CLEARANCE</a>
+                <a href="#" class="cta-button">PROPOSE COLLABORATION</a>
+                <a href="#" class="cta-button">REQUEST INFORMATION</a>
+            </div>
+        </section>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>© 2025 Defense Research Institute. All rights reserved.</p>
+            <p>DISTRIBUTION STATEMENT A: Approved for public release; distribution unlimited.</p>
+            <div class="social-icons">
+                <a href="#" class="social-icon">T</a>
+                <a href="#" class="social-icon">F</a>
+                <a href="#" class="social-icon">L</a>
+                <a href="#" class="social-icon">Y</a>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Intersection Observer for scroll animations
+        const sections = document.querySelectorAll('section');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+        
+        // Category filter functionality
+        const categoryButtons = document.querySelectorAll('.category-filter');
+        
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Here you would typically filter the research cards
+                // For demo purposes, we're just toggling the active class
+            });
+        });
+    </script>
+</body>
+</html>

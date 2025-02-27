@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BharatVerse - Science & Innovation Platform</title>
+  <style>
+    /* Existing CSS remains the same */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="logo">
+        <span>BharatVerse</span>
+      </div>
+      <div class="menu">
+        <ul>
+          <li class="active" data-scene="dashboard">Dashboard</li>
+          <li data-scene="isro">Virtual ISRO HQ</li>
+          <li data-scene="drdo">Virtual DRDO Lab</li>
+          <li data-scene="projects">My Projects</li>
+          <li data-scene="research">Research Gallery</li>
+          <li data-scene="innovation">Innovation Hub</li>
+          <li data-scene="connect">Connect & Collaborate</li>
+          <li data-scene="settings">Settings</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="main-content">
+      <div class="header">
+        <h2>Science & Innovation Hub</h2>
+        <div class="user-info">
+          <span>Rohit Sharma</span>
+          <img src="/api/placeholder/40/40" alt="User Avatar">
+        </div>
+      </div>
+      
+      <div class="content-area">
+        <div class="scene-container" id="scene-container">
+          <!-- Three.js 3D scene will be rendered here -->
+        </div>
+        
+        <div class="chatbot-container">
+          <div class="chatbot-header">
+            <img src="/api/placeholder/30/30" alt="Bot Avatar">
+            <span>BharatVerse AI Assistant</span>
+          </div>
+          <div class="chat-messages" id="chat-messages">
+            <div class="message bot-message">
+              Namaste! BharatVerse AI Assistant me aapka swagat hai. Mai aapki kaise help kar sakta hoon? Innovation ya research ke baare me kuch poochna chahte hain?
+            </div>
+          </div>
+          <div class="chat-input">
+            <input type="text" id="user-input" placeholder="Type your message in Hinglish...">
+            <button id="send-button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+            <button class="mic-button" id="mic-button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three/examples/js/loaders/GLTFLoader.js"></script>
+  <script>
+    let scene, camera, renderer, currentScene;
+
+    function initScene() {
+      const container = document.getElementById('scene-container');
+      
+      // Create scene
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x000000);
+      
+      // Create camera
+      camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+      camera.position.z = 5;
+      
+      // Create renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      container.appendChild(renderer.domElement);
+      
+      // Add ambient light
+      const ambientLight = new THREE.AmbientLight(0x333333);
+      scene.add(ambientLight);
+      
+      // Add directional light
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+      directionalLight.position.set(5, 3, 5);
+      scene.add(directionalLight);
+      
+      // Load 3D models
+      loadModels();
+      
+      // Animation loop
+      function animate() {
+        requestAnimationFrame(animate);
+        
+        if (currentScene) {
+          currentScene.rotation.y += 0.005;
+        }
+        
+        renderer.render(scene, camera);
+      }
+      
+      animate();
+      
+      // Handle window resize
+      window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      });
+    }
+
+    function loadModels() {
+      const loader = new THREE.GLTFLoader();
+      
+      // Load rocket model
+      loader.load('path/to/rocket.glb', function(gltf) {
+        const rocket = gltf.scene;
+        rocket.scale.set(0.5, 0.5, 0.5);
+        rocket.position.set(0, 0, 0);
+        rocket.visible = false;
+        scene.add(rocket);
+        window.rocketModel = rocket;
+      });
+      
+      // Load satellite model
+      loader.load('path/to/satellite.glb', function(gltf) {
+        const satellite = gltf.scene;
+        satellite.scale.set(0.5, 0.5, 0.5);
+        satellite.position.set(0, 0, 0);
+        satellite.visible = false;
+        scene.add(satellite);
+        window.satelliteModel = satellite;
+      });
+    }
+
+    function switchScene(sceneName) {
+      if (currentScene) {
+        currentScene.visible = false;
+      }
+      
+      switch (sceneName) {
+        case 'dashboard':
+          currentScene = null;
+          break;
+        case 'isro':
+          currentScene = window.rocketModel;
+          break;
+        case 'drdo':
+          currentScene = window.satelliteModel;
+          break;
+        case 'projects':
+          currentScene = window.rocketModel;
+          break;
+        case 'research':
+          currentScene = window.satelliteModel;
+          break;
+        case 'innovation':
+          currentScene = window.rocketModel;
+          break;
+        case 'connect':
+          currentScene = window.satelliteModel;
+          break;
+        case 'settings':
+          currentScene = null;
+          break;
+      }
+      
+      if (currentScene) {
+        currentScene.visible = true;
+      }
+    }
+
+    // Initialize chat functionality
+    function initChat() {
+      const chatMessages = document.getElementById('chat-messages');
+      const userInput = document.getElementById('user-input');
+      const sendButton = document.getElementById('send-button');
+      const micButton = document.getElementById('mic-button');
+      
+      // Sample responses (in a real implementation, this would use OpenAI API)
+      const sampleResponses = [
+        "Yeh bohot interesting question hai! BharatVerse me aap apne science projects ko virtual space me showcase kar sakte hain.",
+        "Haan ji, ISRO virtual headquarters me aap space research dekh sakte hain aur scientists se connect kar sakte hain.",
+        "Bilkul! Aapka innovation project upload karne ke liye 'My Projects' section me jakar 'Add New Project' pe click karein.",
+        "BharatVerse me abhi 250+ students ke innovative projects hain. Aap Gallery section me explore kar sakte hain.",
+        "R&D collaboration ke liye aap 'Connect & Collaborate' section me ja sakte hain jahan researchers aur mentors mil sakte hain."
+      ];
+      
+      function addMessage(text, isUser) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message');
+        messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
+        messageDiv.textContent = text;
+        chatMessages.appendChild(messageDiv);
+        
+        // Scroll to bottom
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+      
+      function getResponse(userMessage) {
+        // In a real implementation, this would call the OpenAI API
+        // For now, just return a random sample response
+        return sampleResponses[Math.floor(Math.random() * sampleResponses.length)];
+      }
+      
+      function handleUserInput() {
+        const text = userInput.value.trim();
+        if (text === '') return;
+        
+        addMessage(text, true);
+        userInput.value = '';
+        
+        // Simulate typing delay
+        setTimeout(() => {
+          const response = getResponse(text);
+          addMessage(response, false);
+        }, 1000);
+      }
+      
+      // Event listeners
+      sendButton.addEventListener('click', handleUserInput);
+      userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          handleUserInput();
+        }
+      });
+      
+      // Speech recognition (placeholder - in a real implementation would use Web Speech API)
+      micButton.addEventListener('click', () => {
+        alert('Speech recognition will be implemented in a future version using Web Speech API.');
+      });
+    }
+    
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', () => {
+      initScene();
+      initChat();
+      
+      // Add event listeners for menu items
+      const menuItems = document.querySelectorAll('.menu li');
+      menuItems.forEach(item => {
+        item.addEventListener('click', () => {
+          menuItems.forEach(i => i.classList.remove('active'));
+          item.classList.add('active');
+          switchScene(item.dataset.scene);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

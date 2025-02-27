@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISRO Interactive Portal</title>
+    <style>
+        :root {
+            --deep-space: #0a0e17;
+            --space-blue: #1a2639;
+            --space-accent: #3e4a61;
+            --star-color: #f0f0ff;
+            --isro-blue: #00b4d8;
+            --isro-orange: #ff5400;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: var(--deep-space);
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        header {
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo img {
+            height: 50px;
+        }
+        
+        .logo h1 {
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        nav a:hover {
+            background-color: var(--isro-blue);
+        }
+        
+        .hero {
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(0, 180, 216, 0.8);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin-bottom: 30px;
+        }
+        
+        .cta-button {
+            background-color: var(--isro-orange);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--isro-orange);
+        }
+        
+        #solarSystem {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .section {
+            padding: 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .section-header h2 {
+            font-size: 2.5rem;
+            color: var(--isro-blue);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-header h2::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background-color: var(--isro-orange);
+        }
+        
+        .section-header p {
+            font-size: 1.1rem;
+            color: var(--star-color);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .building-model {
+            background-color: rgba(26, 38, 57, 0.8);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 0 20px rgba(0, 180, 216, 0.3);
+        }
+        
+        .model-container {
+            height: 500px;
+            position: relative;
+            border: 1px solid var(--space-accent);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .building-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .building-info-section {
+            background-color: rgba(62, 74, 97, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            flex: 1;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .building-info-section:hover {
+            background-color: var(--isro-blue);
+            transform: translateY(-5px);
+        }
+        
+        .building-info-section h3 {
+            margin-bottom: 10px;
+            color: var(--isro-orange);
+        }
+        
+        .spacecraft-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .spacecraft-card {
+            background-color: rgba(26, 38, 57, 0.8);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .spacecraft-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 20px rgba(0, 180, 216, 0.5);
+        }
+        
+        .spacecraft-image {
+            height: 200px;
+            background-position: center;
+            background-size: cover;
+            position: relative;
+        }
+        
+        .spacecraft-content {
+            padding: 20px;
+        }
+        
+        .spacecraft-content h3 {
+            color: var(--isro-orange);
+            margin-bottom: 10px;
+        }
+        
+        .view-model-btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 15px;
+            background-color: var(--isro-blue);
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .view-model-btn:hover {
+            background-color: var(--isro-orange);
+        }
+        
+        .timeline {
+            margin-top: 50px;
+            position: relative;
+        }
+        
+        .timeline::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 4px;
+            background-color: var(--isro-blue);
+            transform: translateX(-50%);
+        }
+        
+        .timeline-item {
+            margin-bottom: 50px;
+            position: relative;
+        }
+        
+        .timeline-content {
+            position: relative;
+            width: 45%;
+            padding: 20px;
+            background-color: rgba(26, 38, 57, 0.8);
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 180, 216, 0.3);
+        }
+        
+        .timeline-item:nth-child(odd) .timeline-content {
+            left: 55%;
+        }
+        
+        .timeline-item:nth-child(even) .timeline-content {
+            left: 0;
+        }
+        
+        .timeline-date {
+            position: absolute;
+            top: 0;
+            background-color: var(--isro-orange);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .timeline-item:nth-child(odd) .timeline-date {
+            left: 0;
+            transform: translateX(-50%);
+        }
+        
+        .timeline-item:nth-child(even) .timeline-date {
+            right: 0;
+            transform: translateX(50%);
+        }
+        
+        .timeline-content h3 {
+            color: var(--isro-blue);
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .timeline-content .media {
+            margin: 15px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            max-height: 200px;
+        }
+        
+        .timeline-content .media img {
+            width: 100%;
+            height: auto;
+        }
+        
+        .museum-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .museum-item {
+            background-color: rgba(26, 38, 57, 0.8);
+            border-radius: 8px;
+            overflow: hidden;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .museum-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .museum-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .museum-content h3 {
+            color: var(--isro-orange);
+            margin-bottom: 10px;
+        }
+        
+        .museum-content .view-more {
+            margin-top: auto;
+            align-self: flex-start;
+            padding: 8px 15px;
+            background-color: var(--isro-blue);
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .museum-content .view-more:hover {
+            background-color: var(--isro-orange);
+        }
+        
+        .astronaut-experience {
+            background-color: rgba(26, 38, 57, 0.8);
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .vr-preview {
+            max-width: 800px;
+            margin: 30px auto;
+            height: 450px;
+            background-color: var(--space-accent);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .vr-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .vr-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        
+        .vr-preview:hover .vr-overlay {
+            opacity: 1;
+        }
+        
+        .mission-tracker {
+            margin-top: 40px;
+        }
+        
+        .tracker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .mission-card {
+            background-color: rgba(26, 38, 57, 0.8);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .mission-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .status-upcoming {
+            background-color: var(--isro-blue);
+        }
+        
+        .status-active {
+            background-color: #0f0;
+        }
+        
+        .status-completed {
+            background-color: #ddd;
+            color: #333;
+        }
+        
+        .mission-card h3 {
+            color: var(--isro-orange);
+            margin-bottom: 10px;
+        }
+        
+        .mission-details {
+            margin-top: 15px;
+        }
+        
+        .mission-details p {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            width: 100%;
+            background-color: var(--space-accent);
+            border-radius: 5px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--isro-orange);
+            width: 75%;
+        }
+        
+        .space-game {
+            background-color: rgba(26, 38, 57, 0.8);
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .game-container {
+            max-width: 800px;
+            height: 500px;
+            margin: 30px auto;
+            background-color: var(--deep-space);
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid var(--isro-blue);
+        }
+        
+        .game-controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .game-btn {
+            padding: 10px 20px;
+            background-color: var(--isro-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .game-btn:hover {
+            background-color: var(--isro-orange);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: var(--space-blue);
+            width: 90%;
+            max-width: 800px;
+            border-radius: 8px;
+            padding: 30px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: var(--isro-orange);
+        }
+        
+        .model-view {
+            height: 400px;
+            margin: 20px 0;
+            background-color: var(--deep-space);
+            border-radius: 8px;
+        }
+        
+        footer {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .footer-section h3 {
+            color: var(--isro-blue);
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .footer-section h3::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 50px;
+            height: 2px;
+            background-color: var(--isro-orange);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--isro-orange);
+            padding-left: 5px;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: var(--space-accent);
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--isro-orange);
+            transform: translateY(-5px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid var(--space-accent);
+            color: #aaa;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h2 {
+                font-size: 2rem;
+            }
+            
+            nav ul {
+                gap: 10px;
+            }
+            
+            .logo h1 {
+                font-size: 1.2rem;
+            }
+            
+            .building-info {
+                flex-direction: column;
+            }
+            
+            .building-info-section {
+                margin: 10px 0;
+            }
+            
+            .timeline::before {
+                left: 30px;
+            }
+            
+            .timeline-content {
+                width: 85%;
+                left: 50px !important;
+            }
+            
+            .timeline-date {
+                left: 30px !important;
+                transform: none !important;
+                top: -30px;
+            }
+            
+            .model-container {
+                height: 350px;
+            }
+        }
+        
+        /* Animation classes */
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0); }
+        }
+        
+        .float {
+            animation: float 5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 3s infinite;
+        }
+        /* Twinkling stars */
+.star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background-color: var(--star-color);
+    border-radius: 50%;
+    opacity: 0;
+    animation: twinkle 2s infinite ease-in-out;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+/* Shooting stars */
+.shooting-star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0), var(--star-color));
+    border-radius: 50%;
+    opacity: 0;
+    animation: shoot 3s infinite linear;
+}
+
+@keyframes shoot {
+    0% {
+        opacity: 0;
+        transform: translateX(0) translateY(0);
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(100vw) translateY(100vh);
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <header>
+        <div class="logo">
+            <img src="/api/placeholder/50/50" alt="ISRO Logo">
+            <h1>ISRO Interactive Portal</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#hq-model">3D HQ</a></li>
+                <li><a href="#spacecraft">Spacecraft</a></li>
+                <li><a href="#timeline">Timeline</a></li>
+                <li><a href="#museum">Museum</a></li>
+                <li><a href="#astronaut">Astronaut Experience</a></li>
+                <li><a href="#missions">Mission Tracker</a></li>
+                <li><a href="#game">Space Game</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <div class="hero">
+        <canvas id="solarSystem"></canvas>
+        <h2>Exploring the Universe with ISRO</h2>
+        <p>Discover India's space journey through interactive 3D models, historical timelines, and virtual experiences. Dive into the past, present, and future of India's space exploration.</p>
+        <a href="#hq-model" class="cta-button">Begin Your Journey</a>
+    </div>
+    
+    <section id="hq-model" class="section">
+        <div class="section-header">
+            <h2>3D ISRO Headquarters</h2>
+            <p>Explore the virtual model of ISRO's headquarters. Click on different sections to learn more about each facility and the work conducted there.</p>
+        </div>
+        
+        <div class="building-model">
+            <div class="model-container">
+                <img src="/api/placeholder/800/500" alt="ISRO HQ 3D Model" style="width: 100%; height: 100%; object-fit: cover;">
+                <!-- 3D model would be rendered here using Three.js -->
+            </div>
+            
+            <div class="building-info">
+                <div class="building-info-section" id="mission-control">
+                    <h3>Mission Control Center</h3>
+                    <p>The nerve center of ISRO's operations, where satellite launches and space missions are monitored and controlled in real-time by a team of scientists and engineers.</p>
+                </div>
+                
+                <div class="building-info-section" id="research-labs">
+                    <h3>Research & Development Labs</h3>
+                    <p>State-of-the-art facilities where ISRO's scientists develop and test new technologies for rockets, satellites, and space exploration equipment.</p>
+                </div>
+                
+                <div class="building-info-section" id="admin-block">
+                    <h3>Administrative Block</h3>
+                    <p>Houses the offices of ISRO's chairman, directors, and administrative staff who coordinate and manage India's ambitious space programs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="spacecraft" class="section">
+        <div class="section-header">
+            <h2>Satellite & Rocket Showcase</h2>
+            <p>Explore detailed 3D models of ISRO's most iconic spacecraft and launch vehicles. Learn about their specifications, missions, and contributions to India's space program.</p>
+        </div>
+        
+        <div class="spacecraft-gallery">
+            <div class="spacecraft-card">
+                <div class="spacecraft-image" style="background-image: url('/api/placeholder/300/200')"></div>
+                <div class="spacecraft-content">
+                    <h3>PSLV (Polar Satellite Launch Vehicle)</h3>
+                    <p>ISRO's workhorse rocket, capable of placing satellites in various orbits. Has completed over 50 successful missions.</p>
+                    <a href="#" class="view-model-btn" data-model="pslv">View 3D Model</a>
+                </div>
+            </div>
+            
+            <div class="spacecraft-card">
+                <div class="spacecraft-image" style="background-image: url('/api/placeholder/300/200')"></div>
+                <div class="spacecraft-content">
+                    <h3>GSLV (Geosynchronous Satellite Launch Vehicle)</h3>
+                    <p>Designed to launch satellites into geosynchronous orbit. Features indigenous cryogenic upper stage technology.</p>
+                    <a href="#" class="view-model-btn" data-model="gslv">View 3D Model</a>
+                </div>
+            </div>
+            
+            <div class="spacecraft-card">
+                <div class="spacecraft-image" style="background-image: url('/api/placeholder/300/200')"></div>
+                <div class="spacecraft-content">
+                    <h3>Chandrayaan</h3>
+                    <p>India's lunar exploration mission that discovered water molecules on the Moon. Chandrayaan-2 and 3 continued lunar exploration.</p>
+                    <a href="#" class="view-model-btn" data-model="chandrayaan">View 3D Model</a>
+                </div>
+            </div>
+            
+            <div class="spacecraft-card">
+                <div class="spacecraft-image" style="background-image: url('/api/placeholder/300/200')"></div>
+                <div class="spacecraft-content">
+                    <h3>Mangalyaan (Mars Orbiter Mission)</h3>
+                    <p>India's first interplanetary mission and the first Mars mission from Asia to reach Mars orbit successfully.</p>
+                    <a href="#" class="view-model-btn" data-model="mangalyaan">View 3D Model</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="timeline" class="section">
+        <div class="section-header">
+            <h2>ISRO Timeline</h2>
+            <p>Journey through the history of India's space program with this interactive timeline highlighting ISRO's major milestones and achievements.</p>
+        </div>
+        
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-date">1969</div>
+                <div class="timeline-content">
+                    <h3>ISRO Established</h3>
+                    <p>Indian Space Research Organisation (ISRO) was formed on August 15, 1969, superseding the Indian National Committee for Space Research (INCOSPAR).</p>
+                    <div class="media">
+                        <img src="/api/placeholder/400/200" alt="ISRO Establishment">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-date">1975</div>
+                <div class="timeline-content">
+                    <h3>Aryabhata Satellite</h3>
+                    <p>India's first satellite, Aryabhata, was launched on April 19, 1975, from Kapustin Yar, a Russian rocket launch and development site.</p>
+                    <div class="media">
+                        <img src="/api/placeholder/400/200" alt="Aryabhata Satellite">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-date">1980</div>
+                <div class="timeline-content">
+                    <h3>First Indigenous Satellite Launch</h3>
+                    <p>Rohini RS-1 became the first satellite to be placed in orbit by an Indian-made launch vehicle, SLV-3.</p>
+                    <div class="media">
+                        <img src="/api/placeholder/400/200" alt="SLV-3 Launch">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-date">2008</div>
+                <div class="timeline-content">
+                    <h3>Chandrayaan-1 Mission</h3>
+                    <p>India's first lunar probe launched by PSLV-XL, which made India the fourth country to place its flag on the Moon.</p>
+                    <div class="media">
+                        <img src="/api/placeholder/400/200" alt="Chandrayaan-1">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-date">2014</div>
+                <div class="timeline-content">
+                    <h3>Mars Orbiter Mission (Mangalyaan)</h3>
+                    <p>India became the first Asian nation to reach Mars orbit, and the first nation in the world to do so in its first attempt.</p>
+                    <div class="media">
+                        <img src="/api/placeholder/400/200" alt="Mangalyaan">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-date">2019</div>
+                <div class="timeline-content">
+                    <h3>Chandrayaan-2 Launch</h3>
+                    <p>India's second lunar exploration mission consisting of an orbiter, lander (Vikram), and rover (Pragyan).</p>
+                    <div class="media">
+                        <img src="/api/placeholder/400/200" alt="Chandrayaan-2">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-date">2023</div>
+                <div class="timeline-content">
+                    <h3>Chandrayaan-3 Success</h3>
+                    <p>India successfully landed a spacecraft near the lunar south pole, making it the fourth country to achieve a soft landing on the Moon.</p>
+                    <div class="media">
+                        <img src="/api/placeholder/400/200" alt="Chandrayaan-3">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <canvas class="stars" id="stars"></canvas>
+        <div class="stars" id="stars"></div>
+    </section>
+    
+    <section id="museum" class="section">
+        <div class="section-header">
+            <h2>Virtual Museum</h2>
+            <p>Explore ISRO's rich heritage through historical documents, profiles of pioneering scientists, and blueprints of India's early space missions.</p>
+        </div>
+        
+        <div class="museum-gallery">
+            <div class="museum-item">
+                <div class="museum-image" style="background-image: url('/api/placeholder/300/200')"></div>
+                <div class="museum-content">
+                    <h3>Dr. Vikram Sarabhai</h3>
+                    <script>
+                        // Function to create twinkling stars
+                        function createStars() {
+                            const starsContainer = document.getElementById('stars');
+                            const numStars = 200; // Number of stars
+                    
+                            for (let i = 0; i < numStars; i++) {
+                                const star = document.createElement('div');
+                                star.classList.add('star');
+                                star.style.top = `${Math.random() * 100}%`;
+                                star.style.left = `${Math.random() * 100}%`;
+                                star.style.animationDelay = `${Math.random() * 5}s`; // Random delay for twinkling effect
+                                starsContainer.appendChild(star);
+                            }
+                        }
+                    
+                        // Function to create shooting stars
+                        function createShootingStars() {
+                            const starsContainer = document.getElementById('stars');
+                            const numShootingStars = 3; // Number of shooting stars
+                    
+                            for (let i = 0; i < numShootingStars; i++) {
+                                const shootingStar = document.createElement('div');
+                                shootingStar.classList.add('shooting-star');
+                                shootingStar.style.top = `${Math.random() * 100}%`;
+                                shootingStar.style.left = `${Math.random() * 100}%`;
+                                shootingStar.style.animationDelay = `${Math.random() * 10}s`; // Random delay for shooting star effect
+                                starsContainer.appendChild(shootingStar);
+                            }
+                        }
+                    
+                        // Call the functions to create stars and shooting stars
+                        createStars();
+                        createShootingStars();
+                    </script>
+                </body>
+                </html>
+                        
+                           
